@@ -13,7 +13,7 @@ const TOKEN_PATH = 'token.json'
 fs.readFile('credentials.json', (err, content) => {
   if (err) return console.log('Error loading client secret file:', err)
   // Authorize a client with credentials, then call the Google Sheets API.
-  authorize(JSON.parse(content), create_spreadsheet)
+  authorize(JSON.parse(content), update_data)
 })
 
 const create_spreadsheet = (auth) => {
@@ -63,6 +63,26 @@ const read_data = (auth) => {
     if (err) return console.log('The API returned an error: ' + err)
     const rows = response.data.values
     console.log(rows)
+  })
+}
+
+const update_data = (auth) => {
+  const sheets = google.sheets({version: 'v4', auth})
+
+  const request = {
+    spreadsheetId: '1aQTnAYFqDZsUNA1o0Q1-FXMJJxpRNa4acinTBs4j_Gk',
+    range: 'Sheet1!A1',
+    valueInputOption: 'USER_ENTERED',
+    resource: {
+        "majorDimension": "ROWS",
+        "values": [["7","7","7"]]
+    },
+    auth: auth,
+  }
+
+  const response = sheets.spreadsheets.values.update(request, (err, response) => {
+    if (err) return console.log('The API returned an error: ' + err)     
+    console.log(JSON.stringify(response, null, 2))
   })
 }
 
