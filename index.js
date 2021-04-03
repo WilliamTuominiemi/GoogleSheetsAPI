@@ -3,7 +3,7 @@ const readline = require('readline');
 const {google} = require('googleapis');
 
 // If modifying these scopes, delete token.json.
-const SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly'];
+const SCOPES = ['https://www.googleapis.com/auth/spreadsheets'];
 // The file token.json stores the user's access and refresh tokens, and is
 // created automatically when the authorization flow completes for the first
 // time.
@@ -13,8 +13,30 @@ const TOKEN_PATH = 'token.json';
 fs.readFile('credentials.json', (err, content) => {
   if (err) return console.log('Error loading client secret file:', err);
   // Authorize a client with credentials, then call the Google Sheets API.
-  authorize(JSON.parse(content), datapull);
+  authorize(JSON.parse(content), append);
 });
+
+function append(auth) {
+
+  const sheets = google.sheets({version: 'v4', auth});
+
+  const request = {
+    spreadsheetId: '1aQTnAYFqDZsUNA1o0Q1-FXMJJxpRNa4acinTBs4j_Gk',
+    range: 'Sheet1!A:B',
+    valueInputOption: 'USER_ENTERED',
+    insertDataOption: 'INSERT_ROWS',
+    resource: {
+        "majorDimension": "ROWS",
+        "values": [["Row 1 Col 1","Row 1 Col 2"], ["Row 2 Col 1","Row 2 Col 2"]]
+    },
+    auth: auth,
+  };
+
+  const response = sheets.spreadsheets.values.append(request, (err, response) => {
+    if (err) return console.log('The API returned an error: ' + err);      
+    console.log(JSON.stringify(response, null, 2));
+  })
+}
 
 function datapull(auth) {
 
