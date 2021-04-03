@@ -6,6 +6,7 @@ const fs = require('fs')
 //    https://console.developers.google.com/apis/api/sheets
 // 2. Install the Node.js client library by running
 //    `npm install googleapis --save`
+// 3. Download credentials.json from your Google Cloud Platform Console app credentials
 
 const readline = require('readline')
 const {google} = require('googleapis')
