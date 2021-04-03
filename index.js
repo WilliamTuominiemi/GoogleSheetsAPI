@@ -13,8 +13,29 @@ const TOKEN_PATH = 'token.json';
 fs.readFile('credentials.json', (err, content) => {
   if (err) return console.log('Error loading client secret file:', err);
   // Authorize a client with credentials, then call the Google Sheets API.
-  authorize(JSON.parse(content), listMajors);
+  authorize(JSON.parse(content), datapull);
 });
+
+function datapull(auth) {
+
+  const sheets = google.sheets({version: 'v4', auth});
+  
+  // Pulling the data from the specified spreadsheet and the specified range  
+  var result = sheets.spreadsheets.values.get({
+    // (1) Changed spreadsheet ID
+    spreadsheetId: '1aQTnAYFqDZsUNA1o0Q1-FXMJJxpRNa4acinTBs4j_Gk',
+    // (2) Changed the range of data being pulled
+    range: 'Sheet1!A1:A4',
+  }, (err, response)=>{
+    if (err) return console.log('The API returned an error: ' + err);
+    
+    // (3) Setting data for daily tracking
+    const rows = response.data.values;
+    
+    // (4) Rendering the page and passing the rows data in
+    console.log(rows)
+  });
+}
 
 /**
  * Create an OAuth2 client with the given credentials, and then execute the
@@ -71,6 +92,7 @@ function getNewToken(oAuth2Client, callback) {
  * @see https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit
  * @param {google.auth.OAuth2} auth The authenticated Google OAuth client.
  */
+
 function listMajors(auth) {
   const sheets = google.sheets({version: 'v4', auth});
   sheets.spreadsheets.values.get({
