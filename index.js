@@ -1,9 +1,23 @@
 const fs = require('fs')
+// BEFORE RUNNING:
+// ---------------
+// 1. If not already done, enable the Google Sheets API
+//    and check the quota for your project at
+//    https://console.developers.google.com/apis/api/sheets
+// 2. Install the Node.js client library by running
+//    `npm install googleapis --save`
+
 const readline = require('readline')
 const {google} = require('googleapis')
 
 // If modifying these scopes, delete token.json.
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
+// Authorize using one of the following scopes:
+  //   'https://www.googleapis.com/auth/drive'
+  //   'https://www.googleapis.com/auth/drive.file'
+  //   'https://www.googleapis.com/auth/spreadsheets'
+// Quickstart has .readonly at the end, remove that shit. 
+
 // The file token.json stores the user's access and refresh tokens, and is
 // created automatically when the authorization flow completes for the first
 // time.
@@ -16,6 +30,8 @@ fs.readFile('credentials.json', (err, content) => {
   authorize(JSON.parse(content), update_data)
 })
 
+
+// Creating a spreadsheet
 const create_spreadsheet = (auth) => {
   const sheets = google.sheets({version: 'v4', auth})
 
@@ -23,28 +39,30 @@ const create_spreadsheet = (auth) => {
     auth: auth
   }
 
+  // Create spreadsheet function
   const response = sheets.spreadsheets.create(request, (err, response) => {
     if (err) return console.log('The API returned an error: ' + err)     
     console.log(JSON.stringify(response, null, 2))
   })
 }
 
-
+// Appending data to sheet
 const append_data = (auth) => {
   const sheets = google.sheets({version: 'v4', auth})
 
   const request = {
-    spreadsheetId: '1aQTnAYFqDZsUNA1o0Q1-FXMJJxpRNa4acinTBs4j_Gk',
-    range: 'Sheet1!A:B',
-    valueInputOption: 'USER_ENTERED',
-    insertDataOption: 'INSERT_ROWS',
+    spreadsheetId: '1aQTnAYFqDZsUNA1o0Q1-FXMJJxpRNa4acinTBs4j_Gk',   // The ID of the spreadsheet to update.
+    range: 'Sheet1!A:B',  // Values are appended after the last row of the table.
+    valueInputOption: 'USER_ENTERED', // How the input data should be interpreted.
+    insertDataOption: 'INSERT_ROWS',   // How the input data should be inserted.
     resource: {
         "majorDimension": "ROWS",
         "values": [["Row 1 Col 1","Row 1 Col 2"], ["Row 2 Col 1","Row 2 Col 2"]]
     },
-    auth: auth,
+    auth: auth, // Authorize
   }
 
+  // Append function
   const response = sheets.spreadsheets.values.append(request, (err, response) => {
     if (err) return console.log('The API returned an error: ' + err)     
     console.log(JSON.stringify(response, null, 2))
@@ -55,13 +73,14 @@ const read_data = (auth) => {
   const sheets = google.sheets({version: 'v4', auth})
   
   const request = {
-    spreadsheetId: '1aQTnAYFqDZsUNA1o0Q1-FXMJJxpRNa4acinTBs4j_Gk',
+    spreadsheetId: '1aQTnAYFqDZsUNA1o0Q1-FXMJJxpRNa4acinTBs4j_Gk',  // The ID of the spreadsheet to update.
     range: 'Sheet1!A1:A4',
   }
 
+  // Get data function
   const response = sheets.spreadsheets.values.get(request, (err, response) => {
     if (err) return console.log('The API returned an error: ' + err)
-    const rows = response.data.values
+    const rows = response.data.values // Formats response
     console.log(rows)
   })
 }
@@ -70,16 +89,17 @@ const update_data = (auth) => {
   const sheets = google.sheets({version: 'v4', auth})
 
   const request = {
-    spreadsheetId: '1aQTnAYFqDZsUNA1o0Q1-FXMJJxpRNa4acinTBs4j_Gk',
-    range: 'Sheet1!A1',
-    valueInputOption: 'USER_ENTERED',
+    spreadsheetId: '1aQTnAYFqDZsUNA1o0Q1-FXMJJxpRNa4acinTBs4j_Gk',  // The ID of the spreadsheet to update.
+    range: 'Sheet1!A1', // Update value on sheet1 A1
+    valueInputOption: 'USER_ENTERED', // How the input data should be interpreted.
     resource: {
         "majorDimension": "ROWS",
         "values": [["7","7","7"]]
     },
-    auth: auth,
+    auth: auth, // Authorize
   }
 
+  // Update function
   const response = sheets.spreadsheets.values.update(request, (err, response) => {
     if (err) return console.log('The API returned an error: ' + err)     
     console.log(JSON.stringify(response, null, 2))
