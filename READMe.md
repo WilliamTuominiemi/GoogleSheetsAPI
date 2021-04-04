@@ -14,8 +14,6 @@ Long story, don't have time to explain
 Here is the quickstart which I used, it's got a reputation for being shit though.
 https://developers.google.com/sheets/api/quickstart/nodejs
 
-I'm currently working on a YouTube video where I'll explain this better. https://www.youtube.com/channel/UCbZRGXMhWPva6OZydKs70ng
-
 ## Documentation
 Pretty much everything can be found here. https://developers.google.com/sheets/api/reference/rest
 
